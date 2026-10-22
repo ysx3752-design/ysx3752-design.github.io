@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>墨竹轩 · 个人博客</title>
+  <!-- 引入 Google Fonts 优雅古风衬线字体（Noto Serif SC） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= 第一部分：刚进入博客时的开屏封面 ================= -->
+  <section id="intro-screen" class="intro-screen">
+    <!-- 墨竹背景遮罩层（增强古风质感与文字对比度） -->
+    <div class="intro-bg-overlay"></div>
+
+    <div class="intro-content">
+      <!-- 居中头像与跳动光圈 -->
+      <div class="avatar-halo-container">
+        <div class="halo halo-1"></div>
+        <div class="halo halo-2"></div>
+        <div class="halo halo-3"></div>
+        <div class="avatar-wrapper">
+          <img src="assets/avatar.png" alt="作者头像" class="intro-avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=bamboo'">
+        </div>
+      </div>
+
+      <!-- 博主题字/印章副标 -->
+      <div class="intro-title-group">
+        <h1 class="intro-title">墨 竹 轩</h1>
+        <p class="intro-subtitle">竹杖芒鞋轻胜马 · 笔墨浮生话长卷</p>
+      </div>
+
+      <!-- 进入博客按钮 -->
+      <button id="enter-blog-btn" class="enter-btn">
+        <span>进入博客</span>
+        <svg class="arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 底部古风印记 -->
+    <div class="intro-footer-text">「 宁可食无肉 · 不可居无竹 」</div>
+  </section>
+
+
+  <!-- ================= 第二部分：博客主界面（左文本，右头像与信息） ================= -->
+  <main id="blog-main" class="blog-main" style="display: none;">
+    <!-- 顶部导航栏 -->
+    <header class="blog-header">
+      <div class="header-inner">
+        <div class="logo-area" id="header-logo">
+          <span class="logo-seal">墨</span>
+          <span class="logo-text">墨竹轩</span>
+        </div>
+        <nav class="nav-links">
+          <a href="#" class="nav-item active" data-category="all">全部文章</a>
+          <a href="#" class="nav-item" data-category="essay">随笔杂记</a>
+          <a href="#" class="nav-item" data-category="tech">墨海寻径</a>
+          <a href="#" class="nav-item" data-category="reading">山中文献</a>
+          <!-- 点击返回开屏 -->
+          <button id="back-to-intro-btn" class="back-intro-tag">返回封面</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 页面核心主体：左右分栏 -->
+    <div class="container main-content-layout">
+
+      <!-- ================= 左侧：所有文本页与文章阅读区 ================= -->
+      <section class="left-content-area">
+        <!-- 分类/状态标题条 -->
+        <div class="content-toolbar">
+          <div class="section-heading">
+            <h2 id="current-view-title">最新文稿</h2>
+            <span class="article-count" id="article-count">共 3 篇文章</span>
+          </div>
+          <div class="search-box">
+            <input type="text" id="article-search" placeholder="检索文篇关键词...">
+          </div>
+        </div>
+
+        <!-- 1. 文章列表视图 -->
+        <div id="article-list-view" class="article-list">
+          <!-- 文章卡片由 JS 动态生成渲染，这里保留语义骨架 -->
+        </div>
+
+        <!-- 2. 文章详情阅读视图（点击某篇文章后展开，附带返回按钮） -->
+        <article id="article-detail-view" class="article-detail" style="display: none;">
+          <button id="back-to-list-btn" class="back-list-btn">
+            ← 返回文稿列表
+          </button>
+          <header class="detail-header">
+            <span class="detail-category" id="detail-category">随笔杂记</span>
+            <h1 class="detail-title" id="detail-title">文章标题</h1>
+            <div class="detail-meta">
+              <span id="detail-date">2026-10-22</span> · 
+              <span id="detail-readtime">阅读约需 4 分钟</span> · 
+              <span id="detail-views">328 次阅览</span>
+            </div>
+          </header>
+          <hr class="ink-divider">
+          <div class="detail-body" id="detail-body">
+            <!-- 文本内容将动态载入 -->
+          </div>
+        </article>
+      </section>
+
+      <!-- ================= 右侧：作者头像与个人信息栏 ================= -->
+      <aside class="right-sidebar">
+        <!-- 个人资料卡片 -->
+        <div class="profile-card sticky-card">
+          <!-- 个人头部 -->
+          <div class="profile-banner"></div>
+          <div class="profile-avatar-box">
+            <img src="assets/avatar.png" alt="作者头像" class="profile-avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=bamboo'">
+          </div>
+
+          <!-- 博主姓名与印章 -->
+          <div class="profile-meta">
+            <h3 class="author-name">钟客 <span class="author-tag">博主</span></h3>
+            <p class="author-motto">“竹杖芒鞋轻胜马，一蓑烟雨任平生。”</p>
+          </div>
+
+          <!-- 数据统计 -->
+          <div class="profile-stats">
+            <div class="stat-item">
+              <span class="stat-num" id="stat-articles">3</span>
+              <span class="stat-label">文稿</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num">1</span>
+              <span class="stat-label">专栏</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num">1.8k</span>
+              <span class="stat-label">访客</span>
+            </div>
+          </div>
+
+          <!-- 个人详细简介 -->
+          <div class="profile-bio">
+            <p>晴空一鹤排云上。</p>
+          </div>
+
+          <hr class="ink-divider-thin">
+
+          <!-- 社交与外部平台矩阵 -->
+          <div class="sidebar-widget">
+            <h4 class="widget-title">全 网 关 联</h4>
+            <div class="profile-social-grid">
+              <!-- 1. GitHub -->
+              <a href="https://github.com/ysx3752-design" target="_blank" rel="noopener noreferrer" class="social-grid-btn" title="访问 钟客 (ysx3752-design) 的 GitHub">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                </svg>
+                <span>GitHub</span>
+              </a>
+
+              <!-- 2. 哔哩哔哩 (B站) -->
+              <a href="https://space.bilibili.com/3546774568438667" target="_blank" rel="noopener noreferrer" class="social-grid-btn bilibili" title="访问 钟客 的 B站 空间">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M17.813 4.653h.854c1.51 0 2.733 1.224 2.733 2.734v9.508c0 1.51-1.223 2.734-2.733 2.734H5.333C3.823 19.629 2.6 18.405 2.6 16.895V7.387c0-1.51 1.223-2.734 2.733-2.734h.98l-1.32-1.32a.75.75 0 1 1 1.06-1.061l2.44 2.44a.75.75 0 0 1-.059 1.12.75.75 0 0 1-.471.175H5.333c-.68 0-1.233.553-1.233 1.234v9.508c0 .68.553 1.234 1.233 1.234h13.334c.68 0 1.233-.553 1.233-1.234V7.387c0-.68-.553-1.234-1.233-1.234h-1.428a.75.75 0 0 1-.53-.22l-2.44-2.44a.75.75 0 1 1 1.06-1.06l1.378 1.378a.748.748 0 0 1 .373-.158zM8.5 10a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+                </svg>
+                <span>哔哩哔哩</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 热门标签专栏 -->
+          <div class="sidebar-widget">
+            <h4 class="widget-title">标 签 云</h4>
+            <div class="tag-cloud">
+              <span class="tag-pill">Python</span>
+              <span class="tag-pill">Go</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- 博客页脚 -->
+    <footer class="blog-footer">
+      <p>© 2026 墨竹轩 · 宁静致远 · 循序渐进</p>
+    </footer>
+  </main>
+
+  <!-- 引入文稿数据源（支持通过 Python 脚本从任意目录同步） -->
+  <script src="articles.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
