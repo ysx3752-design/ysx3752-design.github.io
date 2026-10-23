@@ -14,53 +14,46 @@ const SOCIAL_CONFIG = {
 };
 
 // ==========================================
-// 2. 博客文稿数据源（由 articles.js 动态注入）
+// 2. 博客文稿数据源（由 articles.js 动态载入）
 // ==========================================
 if (typeof BLOG_POSTS === "undefined") {
   window.BLOG_POSTS = [];
 }
 
-// ==========================================
-// 2. DOM 元素获取
-// ==========================================
+// 当前选中的文章 ID
+let currentArticleId = 1;
+
+// DOM 元素获取
 const introScreen = document.getElementById("intro-screen");
 const enterBlogBtn = document.getElementById("enter-blog-btn");
 const blogMain = document.getElementById("blog-main");
 const backToIntroBtn = document.getElementById("back-to-intro-btn");
 const headerLogo = document.getElementById("header-logo");
 
-// 文章视图相关
-const articleListView = document.getElementById("article-list-view");
-const articleDetailView = document.getElementById("article-detail-view");
-const backToListBtn = document.getElementById("back-to-list-btn");
-const currentViewTitle = document.getElementById("current-view-title");
-const articleCountEl = document.getElementById("article-count");
-const searchInput = document.getElementById("article-search");
-
-// 详情容器
-const detailCategory = document.getElementById("detail-category");
+// 中间正文容器
 const detailTitle = document.getElementById("detail-title");
 const detailDate = document.getElementById("detail-date");
 const detailReadtime = document.getElementById("detail-readtime");
 const detailViews = document.getElementById("detail-views");
 const detailBody = document.getElementById("detail-body");
+const bcCurrent = document.getElementById("bc-current");
 
-// 导航栏
-const navItems = document.querySelectorAll(".nav-item");
+// 翻页按钮
+const prevBtn = document.getElementById("prev-article-btn");
+const nextBtn = document.getElementById("next-article-btn");
+const prevTitle = document.getElementById("prev-article-title");
+const nextTitle = document.getElementById("next-article-title");
 
-// 当前状态
-let currentCategory = "all";
-let searchQuery = "";
+// 树检索
+const treeSearchInput = document.getElementById("tree-search");
 
 // ==========================================
-// 3. 页面开屏切换逻辑（核心要求 1 & 2）
+// 3. 页面开屏切换逻辑
 // ==========================================
 
 // 点击“进入博客 ->”过渡到博客主页
 enterBlogBtn.addEventListener("click", () => {
   introScreen.classList.add("fade-out");
-  
-  // 等待渐隐动画完毕后隐藏封面、展开博客主体
   setTimeout(() => {
     introScreen.style.display = "none";
     blogMain.style.display = "flex";
@@ -71,7 +64,6 @@ enterBlogBtn.addEventListener("click", () => {
 // 点击顶部“返回封面”或“Logo”重新呼出开屏封面
 function returnToCover() {
   introScreen.style.display = "flex";
-  // 强制触发回流以保证淡入动画生效
   void introScreen.offsetWidth;
   introScreen.classList.remove("fade-out");
   setTimeout(() => {
@@ -83,116 +75,120 @@ backToIntroBtn.addEventListener("click", returnToCover);
 headerLogo.addEventListener("click", returnToCover);
 
 // ==========================================
-// 4. 左侧文章列表与检索渲染
+// 4. 左侧树状目录交互
 // ==========================================
 
-function filterArticles() {
-  return BLOG_POSTS.filter(post => {
-    const matchCategory = currentCategory === "all" || post.category === currentCategory;
-    const matchSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCategory && matchSearch;
-  });
-}
+// 一级主分类折叠切换
+window.toggleTreeGroup = function(element) {
+  const group = element.closest(".tree-group");
+  if (group) group.classList.toggle("open");
+};
 
-function renderArticleList() {
-  const filtered = filterArticles();
-  articleCountEl.textContent = `共 ${filtered.length} 篇文章`;
+// 二级章节折叠切换
+window.toggleTreeSubgroup = function(element) {
+  const subgroup = element.closest(".tree-subgroup");
+  if (subgroup) subgroup.classList.toggle("open");
+};
 
-  if (filtered.length === 0) {
-    articleListView.innerHTML = `
-      <div style="text-align: center; padding: 60px 20px; color: var(--ink-light); background: var(--card-bg); border-radius: var(--radius-md); border: 1px dashed var(--ink-border);">
-        <p style="font-size: 1.1rem; margin-bottom: 8px;">暂未找到匹配文稿</p>
-        <p style="font-size: 0.9rem;">试着更换检索词，或点击导航栏查看全部文章。</p>
-      </div>
-    `;
-    return;
-  }
+// 动态渲染左侧树叶子列表
+function renderTreeLeaves() {
+  const container = document.getElementById("tree-leaf-container");
+  if (!container || !BLOG_POSTS.length) return;
 
-  articleListView.innerHTML = filtered.map(post => `
-    <article class="article-card" onclick="openArticleDetail(${post.id})">
-      <span class="card-category-tag">${post.categoryName}</span>
-      <h3 class="card-title">${post.title}</h3>
-      <p class="card-excerpt">${post.excerpt}</p>
-      <div class="card-footer">
-        <div class="card-info">
-          <span>${post.date}</span> · 
-          <span>${post.readTime}</span> · 
-          <span>${post.views} 阅读</span>
-        </div>
-        <span class="read-more-link">阅读全文 →</span>
-      </div>
-    </article>
+  container.innerHTML = BLOG_POSTS.map(post => `
+    <div class="tree-leaf-item ${post.id === currentArticleId ? 'active' : ''}" 
+         data-id="${post.id}" 
+         onclick="selectArticle(${post.id})">
+      <span class="leaf-icon">📄</span>
+      <span class="leaf-title">${post.title}</span>
+    </div>
   `).join("");
 }
 
-// 打开文章详情阅读
-window.openArticleDetail = function(id) {
+// 选中并显示特定文章
+window.selectArticle = function(id) {
   const post = BLOG_POSTS.find(p => p.id === id);
   if (!post) return;
 
-  // 填充文章详情内容
-  detailCategory.textContent = post.categoryName;
+  currentArticleId = id;
+
+  // 1. 更新正文展示
   detailTitle.textContent = post.title;
   detailDate.textContent = post.date;
   detailReadtime.textContent = `阅读约需 ${post.readTime}`;
   detailViews.textContent = `${post.views} 次阅览`;
   detailBody.innerHTML = post.content;
+  if (bcCurrent) bcCurrent.textContent = post.title;
 
-  // 切换视图
-  articleListView.style.display = "none";
-  articleDetailView.style.display = "block";
-  document.querySelector(".content-toolbar").style.display = "none";
+  // 2. 更新树叶高亮状态
+  document.querySelectorAll(".tree-leaf-item").forEach(item => {
+    const itemId = parseInt(item.getAttribute("data-id"));
+    if (itemId === id) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
+    }
+  });
 
-  // 平滑滚动到顶部
+  // 3. 更新底部翻页按钮状态
+  updatePager();
+
+  // 4. 平滑滚动到正文顶部
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// 返回文章列表
-backToListBtn.addEventListener("click", () => {
-  articleDetailView.style.display = "none";
-  articleListView.style.display = "flex";
-  document.querySelector(".content-toolbar").style.display = "flex";
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+// 底部上一篇/下一篇切换
+window.navigateArticle = function(delta) {
+  const currentIndex = BLOG_POSTS.findIndex(p => p.id === currentArticleId);
+  if (currentIndex === -1) return;
 
-// 检索过滤
-searchInput.addEventListener("input", (e) => {
-  searchQuery = e.target.value.trim();
-  renderArticleList();
-});
+  const targetIndex = currentIndex + delta;
+  if (targetIndex >= 0 && targetIndex < BLOG_POSTS.length) {
+    selectArticle(BLOG_POSTS[targetIndex].id);
+  }
+};
 
-// 分类导航切换
-navItems.forEach(item => {
-  item.addEventListener("click", (e) => {
-    e.preventDefault();
-    navItems.forEach(n => n.classList.remove("active"));
-    item.classList.add("active");
+function updatePager() {
+  const currentIndex = BLOG_POSTS.findIndex(p => p.id === currentArticleId);
+  if (currentIndex === -1) return;
+
+  // 上一篇
+  if (currentIndex > 0) {
+    const prevPost = BLOG_POSTS[currentIndex - 1];
+    prevBtn.disabled = false;
+    prevTitle.textContent = prevPost.title;
+  } else {
+    prevBtn.disabled = true;
+    prevTitle.textContent = "无";
+  }
+
+  // 下一篇
+  if (currentIndex < BLOG_POSTS.length - 1) {
+    const nextPost = BLOG_POSTS[currentIndex + 1];
+    nextBtn.disabled = false;
+    nextTitle.textContent = nextPost.title;
+  } else {
+    nextBtn.disabled = true;
+    nextTitle.textContent = "无";
+  }
+}
+
+// 树状检索过滤
+if (treeSearchInput) {
+  treeSearchInput.addEventListener("input", (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    const leafItems = document.querySelectorAll(".tree-leaf-item");
     
-    currentCategory = item.getAttribute("data-category");
-    
-    // 更新标题文字
-    if (currentCategory === "all") currentViewTitle.textContent = "最新文稿";
-    else currentViewTitle.textContent = item.textContent;
-
-    // 如果当前在详情页，自动切回列表
-    articleDetailView.style.display = "none";
-    articleListView.style.display = "flex";
-    document.querySelector(".content-toolbar").style.display = "flex";
-
-    renderArticleList();
+    leafItems.forEach(item => {
+      const title = item.querySelector(".leaf-title").textContent.toLowerCase();
+      if (!query || title.includes(query)) {
+        item.style.display = "flex";
+      } else {
+        item.style.display = "none";
+      }
+    });
   });
-});
-
-// 标签云点击快速搜索
-document.querySelectorAll(".tag-pill").forEach(pill => {
-  pill.addEventListener("click", () => {
-    const tagText = pill.textContent.trim();
-    searchInput.value = tagText;
-    searchQuery = tagText;
-    renderArticleList();
-  });
-});
+}
 
 // 应用全网平台配置
 function applySocialConfig() {
@@ -208,10 +204,16 @@ function applySocialConfig() {
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   applySocialConfig();
-  
+
   // 动态更新右侧统计卡片的文章总数
   const statArticles = document.getElementById("stat-articles");
   if (statArticles) statArticles.textContent = BLOG_POSTS.length;
 
-  renderArticleList();
+  // 渲染左侧树
+  renderTreeLeaves();
+
+  // 默认显示第一篇文章
+  if (BLOG_POSTS.length > 0) {
+    selectArticle(BLOG_POSTS[0].id);
+  }
 });

@@ -57,56 +57,112 @@
           <span class="logo-seal">墨</span>
           <span class="logo-text">墨竹轩</span>
         </div>
-        <nav class="nav-links">
-          <a href="#" class="nav-item active" data-category="all">全部文章</a>
-          <a href="#" class="nav-item" data-category="essay">随笔杂记</a>
-          <a href="#" class="nav-item" data-category="tech">墨海寻径</a>
-          <a href="#" class="nav-item" data-category="reading">山中文献</a>
+        <div class="header-actions">
           <!-- 点击返回开屏 -->
           <button id="back-to-intro-btn" class="back-intro-tag">返回封面</button>
-        </nav>
+        </div>
       </div>
     </header>
 
-    <!-- 页面核心主体：左右分栏 -->
+    <!-- 页面核心主体：三栏分治（左侧树状目录，中间正文阅读，右侧个人信息） -->
     <div class="container main-content-layout">
 
-      <!-- ================= 左侧：所有文本页与文章阅读区 ================= -->
-      <section class="left-content-area">
-        <!-- 分类/状态标题条 -->
-        <div class="content-toolbar">
-          <div class="section-heading">
-            <h2 id="current-view-title">最新文稿</h2>
-            <span class="article-count" id="article-count">共 3 篇文章</span>
+      <!-- ================= 1. 左侧：树状知识目录 ================= -->
+      <aside class="left-tree-sidebar sticky-sidebar">
+        <div class="tree-panel">
+          <div class="tree-panel-header">
+            <span class="tree-root-icon">📖</span>
+            <span class="tree-root-title">学习笔记</span>
           </div>
-          <div class="search-box">
-            <input type="text" id="article-search" placeholder="检索文篇关键词...">
+
+          <!-- 检索框 -->
+          <div class="tree-search-box">
+            <input type="text" id="tree-search" placeholder="检索笔记篇章...">
+          </div>
+
+          <!-- 树状节点清单 -->
+          <div class="tree-menu" id="tree-menu">
+            <!-- 一级主分类：机器学习 -->
+            <div class="tree-group open" id="group-ml">
+              <div class="tree-node tree-group-head" onclick="toggleTreeGroup(this)">
+                <span class="node-icon">🤖</span>
+                <span class="node-label">机器学习</span>
+                <svg class="chevron-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+
+              <!-- 二级分类：第一章 简述 -->
+              <div class="tree-subgroup open">
+                <div class="tree-node tree-subgroup-head" onclick="toggleTreeSubgroup(this)">
+                  <span class="node-icon">📁</span>
+                  <span class="node-label">第一章 简述</span>
+                  <svg class="chevron-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+
+                <!-- 三篇文档清单 -->
+                <div class="tree-leaf-container" id="tree-leaf-container">
+                  <div class="tree-leaf-item active" data-id="1" onclick="selectArticle(1)">
+                    <span class="leaf-icon">📄</span>
+                    <span class="leaf-title">机器学习</span>
+                  </div>
+                  <div class="tree-leaf-item" data-id="2" onclick="selectArticle(2)">
+                    <span class="leaf-icon">📄</span>
+                    <span class="leaf-title">神经网络</span>
+                  </div>
+                  <div class="tree-leaf-item" data-id="3" onclick="selectArticle(3)">
+                    <span class="leaf-icon">📄</span>
+                    <span class="leaf-title">深度学习</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </aside>
 
-        <!-- 1. 文章列表视图 -->
-        <div id="article-list-view" class="article-list">
-          <!-- 文章卡片由 JS 动态生成渲染，这里保留语义骨架 -->
-        </div>
+      <!-- ================= 2. 中间：正文阅读核心展示区 ================= -->
+      <section class="center-content-area">
+        <article id="article-detail-view" class="article-detail">
+          <!-- 面包屑导航 -->
+          <nav class="breadcrumb-bar" id="breadcrumb-bar">
+            <span>学习笔记</span>
+            <span class="bc-sep">/</span>
+            <span>机器学习</span>
+            <span class="bc-sep">/</span>
+            <span>第一章 简述</span>
+            <span class="bc-sep">/</span>
+            <span class="bc-current" id="bc-current">机器学习</span>
+          </nav>
 
-        <!-- 2. 文章详情阅读视图（点击某篇文章后展开，附带返回按钮） -->
-        <article id="article-detail-view" class="article-detail" style="display: none;">
-          <button id="back-to-list-btn" class="back-list-btn">
-            ← 返回文稿列表
-          </button>
           <header class="detail-header">
-            <span class="detail-category" id="detail-category">随笔杂记</span>
-            <h1 class="detail-title" id="detail-title">文章标题</h1>
+            <h1 class="detail-title" id="detail-title">机器学习</h1>
             <div class="detail-meta">
               <span id="detail-date">2026-10-22</span> · 
               <span id="detail-readtime">阅读约需 4 分钟</span> · 
-              <span id="detail-views">328 次阅览</span>
+              <span id="detail-views">460 次阅览</span>
             </div>
           </header>
+
           <hr class="ink-divider">
+
           <div class="detail-body" id="detail-body">
-            <!-- 文本内容将动态载入 -->
+            <!-- 正文内容将由 JS 动态装载 -->
           </div>
+
+          <!-- 底部上一篇/下一篇翻页导航 -->
+          <footer class="article-pager">
+            <button id="prev-article-btn" class="pager-btn prev" onclick="navigateArticle(-1)">
+              <span class="pager-label">← 上一篇</span>
+              <span class="pager-title" id="prev-article-title">无</span>
+            </button>
+            <button id="next-article-btn" class="pager-btn next" onclick="navigateArticle(1)">
+              <span class="pager-label">下一篇 →</span>
+              <span class="pager-title" id="next-article-title">神经网络</span>
+            </button>
+          </footer>
         </article>
       </section>
 
