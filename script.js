@@ -31,6 +31,7 @@ const backToIntroBtn = document.getElementById("back-to-intro-btn");
 const headerLogo = document.getElementById("header-logo");
 
 // 中间正文容器
+const detailView = document.getElementById("article-detail-view");
 const detailTitle = document.getElementById("detail-title");
 const detailDate = document.getElementById("detail-date");
 const detailReadtime = document.getElementById("detail-readtime");
@@ -119,6 +120,13 @@ window.selectArticle = function(id) {
   detailViews.textContent = `${post.views} 次阅览`;
   detailBody.innerHTML = post.content;
   if (bcCurrent) bcCurrent.textContent = post.title;
+
+  // 毫秒级动态微跳动画 (丝滑弹性入场，消除切换生硬感)
+  if (detailView) {
+    detailView.classList.remove("article-switching");
+    void detailView.offsetWidth; // 触发 reflow 重置动画
+    detailView.classList.add("article-switching");
+  }
 
   // 2. 更新树叶高亮状态
   document.querySelectorAll(".tree-leaf-item").forEach(item => {
@@ -217,3 +225,157 @@ document.addEventListener("DOMContentLoaded", () => {
     selectArticle(BLOG_POSTS[0].id);
   }
 });
+
+// ==========================================
+// 6. 页面右下角：日光 / 黑夜 模式背景切换
+// ==========================================
+const themeToggleBtn = document.getElementById("theme-toggle-btn");
+const themeBtnIcon = document.getElementById("theme-btn-icon");
+const themeBtnLabel = document.getElementById("theme-btn-label");
+
+function applyTheme(theme) {
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    if (themeBtnIcon) themeBtnIcon.textContent = "🌙";
+    if (themeBtnLabel) themeBtnLabel.textContent = "黑夜";
+    try { localStorage.setItem("mozhu_theme", "dark"); } catch (e) {}
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    if (themeBtnIcon) themeBtnIcon.textContent = "☀️";
+    if (themeBtnLabel) themeBtnLabel.textContent = "日光";
+    try { localStorage.setItem("mozhu_theme", "light"); } catch (e) {}
+  }
+}
+
+// 初始化读取用户已保存的主题（默认日光模式）
+let savedTheme = "light";
+try {
+  savedTheme = localStorage.getItem("mozhu_theme") || "light";
+} catch (e) {}
+applyTheme(savedTheme);
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener("click", () => {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    applyTheme(isDark ? "light" : "dark");
+  });
+}
+
+// ==========================================
+// 7. 右侧博主资料：跟随鼠标滚轮滚动 + 局部外圈 QQ 弹弹动效
+// ==========================================
+(function initProfileCardQQMotion() {
+  const profileCard = document.querySelector(".profile-card");
+  const avatarBox = document.querySelector(".profile-avatar-box");
+  if (!profileCard) return;
+
+  // 物理弹簧模型参数 (Q 弹果冻物理动力学)
+  let posX = 0, posY = 0;
+  let velX = 0, velY = 0;
+  let targetX = 0, targetY = 0;
+
+  let rotX = 0, rotY = 0;
+  let velRotX = 0, velRotY = 0;
+  let targetRotX = 0, targetRotY = 0;
+
+  // 弹簧回复力与阻尼比（调校出富有生命力的 QQ 弹感）
+  const SPRING = 0.075;
+  const DAMPING = 0.78;
+
+  // 触发范围外边距：严格缩小至信息框外圈一小部分 (30px)
+  const TRIGGER_PADDING = 30;
+
+  // 1. 鼠标移动：仅在信息框外圈一小部分内触发微动
+  window.addEventListener("mousemove", (e) => {
+    if (blogMain && blogMain.style.display === "none") return;
+
+    const rect = profileCard.getBoundingClientRect();
+    
+    // 判断鼠标是否在信息框及其外圈 30px 范围内
+    const inTriggerZone = (
+      e.clientX >= rect.left - TRIGGER_PADDING &&
+      e.clientX <= rect.right + TRIGGER_PADDING &&
+      e.clientY >= rect.top - TRIGGER_PADDING &&
+      e.clientY <= rect.bottom + TRIGGER_PADDING
+    );
+
+    if (inTriggerZone) {
+      const cardCenterX = rect.left + rect.width / 2;
+      const cardCenterY = rect.top + rect.height / 2;
+
+      const distX = e.clientX - cardCenterX;
+      const distY = e.clientY - cardCenterY;
+
+      // 归一化偏移量 (-1 到 1)
+      const normX = Math.max(-1, Math.min(1, distX / (rect.width / 2)));
+      const normY = Math.max(-1, Math.min(1, distY / (rect.height / 2)));
+
+      // 弹性微位移与 3D 悬浮视差
+      targetX = normX * 18;
+      targetY = normY * 15;
+      targetRotX = -normY * 8;
+      targetRotY = normX * 8;
+    } else {
+      // 超出外圈范围时，目标迅速归零，弹簧系统自动优雅回弹至原位
+      targetX = 0;
+      targetY = 0;
+      targetRotX = 0;
+      targetRotY = 0;
+    }
+  });
+
+  // 鼠标离开浏览器视口时复位
+  document.addEventListener("mouseleave", () => {
+    targetX = 0;
+    targetY = 0;
+    targetRotX = 0;
+    targetRotY = 0;
+  });
+
+  // 2. 鼠标滚轮滑动：跟随滚轮上下滚动，同时注入 QQ 弹弹的冲量回弹
+  window.addEventListener("wheel", (e) => {
+    if (blogMain && blogMain.style.display === "none") return;
+
+    // 根据滚轮方向与速度注入瞬时垂直微冲量
+    const impulse = Math.max(-16, Math.min(16, e.deltaY * 0.08));
+    velY += impulse;
+    velRotX += impulse * 0.18;
+  }, { passive: true });
+
+  // 3. 弹簧振子物理更新循环 (60fps 硬件加速)
+  function updatePhysics() {
+    // 弹簧回复力与阻尼迭代
+    const forceX = (targetX - posX) * SPRING;
+    velX = (velX + forceX) * DAMPING;
+    posX += velX;
+
+    const forceY = (targetY - posY) * SPRING;
+    velY = (velY + forceY) * DAMPING;
+    posY += velY;
+
+    const forceRotX = (targetRotX - rotX) * SPRING;
+    velRotX = (velRotX + forceRotX) * DAMPING;
+    rotX += velRotX;
+
+    const forceRotY = (targetRotY - rotY) * SPRING;
+    velRotY = (velRotY + forceRotY) * DAMPING;
+    rotY += velRotY;
+
+    // 仅在有动量时驱动变换，节省能耗
+    if (
+      Math.abs(posX) > 0.005 || Math.abs(posY) > 0.005 ||
+      Math.abs(velX) > 0.005 || Math.abs(velY) > 0.005 ||
+      Math.abs(rotX) > 0.005 || Math.abs(rotY) > 0.005
+    ) {
+      profileCard.style.transform = `perspective(800px) translate3d(${posX.toFixed(2)}px, ${posY.toFixed(2)}px, 0) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+
+      if (avatarBox) {
+        avatarBox.style.transform = `translate3d(${(posX * 0.35).toFixed(2)}px, ${(posY * 0.35).toFixed(2)}px, 12px)`;
+      }
+    }
+
+    requestAnimationFrame(updatePhysics);
+  }
+
+  requestAnimationFrame(updatePhysics);
+})();

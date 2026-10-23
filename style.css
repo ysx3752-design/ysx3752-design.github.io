@@ -3,8 +3,8 @@
    ========================================================================== */
 
 :root {
-  /* 宣纸与水墨核心色板 */
-  --bg-rice-paper: #f4f1ea;        /* 宣纸底色 */
+  /* 宣纸与水墨核心色板 (日光模式 - 默认) */
+  --bg-rice-paper: #f4f1ea;        /* 宣纸温润白底色 */
   --card-bg: #ffffff;              /* 卡片纯净底色 */
   --ink-black: #202426;            /* 焦墨色（主标题、主要文字） */
   --ink-deep: #383e42;             /* 浓墨色（正文） */
@@ -17,8 +17,22 @@
   --bamboo-green-hover: #2e5949;   /* 深竹青 */
   --bamboo-soft: rgba(59, 110, 91, 0.1); /* 浅青竹底色 */
   --cinnabar-red: #a8383b;         /* 朱砂红（印章与点缀） */
+
+  /* 树状目录专属变量 */
+  --tree-panel-bg: #fbf9f4;        /* 米色宣纸框架 */
+  --tree-panel-border: #dfd8cc;
+  --tree-panel-header-border: #e7e0d3;
+  --tree-search-bg: #ffffff;
+  --tree-search-border: #dad3c5;
+  --tree-leaf-color: #4b5563;
+
+  /* 导航栏背景 */
+  --header-bg: rgba(244, 241, 234, 0.92);
+  --quote-bg: #f8f7f3;
+  --code-bg: #ebe7df;
+  --code-color: inherit;
   
-  /* 字体排版 */
+  /* 字体排版与阴影 */
   --font-serif: "Noto Serif SC", "Source Han Serif CN", "Songti SC", "SimSun", "STSong", serif;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 8px 24px rgba(32, 36, 38, 0.07);
@@ -26,6 +40,42 @@
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
+}
+
+/* ==========================================================================
+   黑夜模式核心色板 (深蓝黑色基调)
+   ========================================================================== */
+[data-theme="dark"] {
+  --bg-rice-paper: #0b0f19;        /* 深蓝黑底色 */
+  --card-bg: #131b2e;              /* 卡片深蓝黑色 */
+  --ink-black: #f1f5f9;            /* 冷月白（主标题、主要文字） */
+  --ink-deep: #cbd5e1;             /* 正文浅霜灰 */
+  --ink-light: #8b99ad;            /* 次级深蓝灰（副标、元信息） */
+  --ink-border: #1e293b;           /* 深蓝黑描边 */
+  --ink-hover: #ffffff;            /* 高亮纯白 */
+
+  --bamboo-green: #48bb95;         /* 夜竹翠绿 */
+  --bamboo-green-hover: #5edbb3;   /* 亮竹绿 */
+  --bamboo-soft: rgba(72, 187, 149, 0.16);
+  --cinnabar-red: #e05255;         /* 夜色朱砂红 */
+
+  /* 树状目录深蓝黑样式 */
+  --tree-panel-bg: #0f1728;        /* 树面板深蓝黑 */
+  --tree-panel-border: #1e293b;
+  --tree-panel-header-border: #1e293b;
+  --tree-search-bg: #162035;
+  --tree-search-border: #283750;
+  --tree-leaf-color: #94a3b8;
+
+  /* 导航栏背景 */
+  --header-bg: rgba(11, 15, 25, 0.92);
+  --quote-bg: rgba(224, 82, 85, 0.1);
+  --code-bg: #1b263b;
+  --code-color: #93c5fd;
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
 * {
@@ -42,6 +92,7 @@ body {
   letter-spacing: 0.02em;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 /* ==========================================================================
@@ -279,15 +330,17 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(244, 241, 234, 0.92);
+  background: var(--header-bg);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--ink-border);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 .header-inner {
-  max-width: 1200px;
+  max-width: 1680px;
+  width: 98%;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -362,10 +415,10 @@ body {
 
 /* 核心布局容器：网格分栏（左侧 1fr 自适应文本区，右侧 330px 固定资料栏） */
 .container {
-  max-width: 1440px;
-  width: 95%;
+  max-width: 1680px;
+  width: 98%;
   margin: 24px auto;
-  padding: 0 16px;
+  padding: 0 20px 0 12px;
 }
 
 .main-content-layout {
@@ -377,7 +430,7 @@ body {
 }
 
 /* ==========================================================================
-   1. 左侧：知识树状目录侧边栏（参考学习笔记风格）
+   1. 左侧：知识树状目录侧边栏（温润古风米色框架）
    ========================================================================== */
 .left-tree-sidebar {
   width: 100%;
@@ -389,12 +442,13 @@ body {
 }
 
 .tree-panel {
-  background: #1b1e22; /* 深沉砚石黑底色，呼应截图与古风水墨意境 */
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--tree-panel-bg); /* 日光米色 / 黑夜深蓝黑 */
+  border: 1px solid var(--tree-panel-border);
   border-radius: var(--radius-md);
   padding: 18px 14px 22px 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  color: #cbd5e1;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  color: var(--ink-deep);
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
 }
 
 .tree-panel-header {
@@ -402,8 +456,9 @@ body {
   align-items: center;
   gap: 8px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--tree-panel-header-border);
   margin-bottom: 12px;
+  transition: border-color 0.35s ease;
 }
 
 .tree-root-icon {
@@ -413,8 +468,9 @@ body {
 .tree-root-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--ink-black);
   letter-spacing: 0.05em;
+  transition: color 0.35s ease;
 }
 
 /* 树侧边栏检索框 */
@@ -425,10 +481,10 @@ body {
 .tree-search-box input {
   width: 100%;
   padding: 7px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--tree-search-bg);
+  border: 1px solid var(--tree-search-border);
   border-radius: 6px;
-  color: #e2e8f0;
+  color: var(--ink-black);
   font-family: inherit;
   font-size: 0.85rem;
   outline: none;
@@ -436,13 +492,13 @@ body {
 }
 
 .tree-search-box input:focus {
-  border-color: #4eb896;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 2px rgba(78, 184, 150, 0.2);
+  border-color: var(--bamboo-green);
+  background: var(--tree-search-bg);
+  box-shadow: 0 0 0 2px rgba(59, 110, 91, 0.15);
 }
 
 .tree-search-box input::placeholder {
-  color: #64748b;
+  color: #949c9e;
 }
 
 /* 树节点通用交互 */
@@ -466,11 +522,12 @@ body {
 .tree-group-head {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--ink-black);
 }
 
 .tree-group-head:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(59, 110, 91, 0.06);
+  color: var(--bamboo-green);
 }
 
 .tree-subgroup {
@@ -479,13 +536,13 @@ body {
 
 .tree-subgroup-head {
   font-size: 0.88rem;
-  color: #94a3b8;
+  color: var(--ink-deep);
   padding-left: 20px;
 }
 
 .tree-subgroup-head:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--bamboo-green);
+  background: rgba(59, 110, 91, 0.06);
 }
 
 .node-icon {
@@ -500,12 +557,12 @@ body {
 }
 
 .chevron-icon {
-  color: #64748b;
+  color: #9aa3a8;
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .tree-node:hover .chevron-icon {
-  color: #cbd5e1;
+  color: var(--bamboo-green);
 }
 
 /* 展开与折叠状态 */
@@ -538,8 +595,8 @@ body {
   align-items: center;
   gap: 8px;
   padding: 6px 10px 6px 36px;
-  font-size: 0.86rem;
-  color: #94a3b8;
+  font-size: 0.88rem;
+  color: var(--tree-leaf-color);
   border-radius: 6px;
   cursor: pointer;
   user-select: none;
@@ -548,19 +605,26 @@ body {
 }
 
 .tree-leaf-item:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.07);
+  color: var(--bamboo-green);
+  background: rgba(59, 110, 91, 0.07);
 }
 
 .tree-leaf-item.active {
-  background: rgba(78, 184, 150, 0.18);
-  color: #6ee7b7;
+  background: rgba(59, 110, 91, 0.12);
+  color: var(--bamboo-green);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 #34d399;
+  box-shadow: inset 3px 0 0 var(--bamboo-green);
+  animation: leafSelectPulse 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes leafSelectPulse {
+  0% { transform: translateX(0) scale(0.98); }
+  50% { transform: translateX(3px) scale(1.01); }
+  100% { transform: translateX(0) scale(1); }
 }
 
 .tree-leaf-item.active .leaf-title {
-  color: #6ee7b7;
+  color: var(--bamboo-green);
 }
 
 .leaf-icon {
@@ -611,6 +675,31 @@ body {
   padding: 38px 46px;
   box-shadow: var(--shadow-sm);
   animation: fadeIn 0.35s ease;
+  will-change: transform, opacity;
+  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* 切换文章时的毫秒级弹性微跳动动画 (弹润流畅，消除生硬感) */
+.article-detail.article-switching {
+  animation: articleSwitchBounce 320ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes articleSwitchBounce {
+  0% {
+    opacity: 0.25;
+    transform: translateY(14px) scale(0.993);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.002);
+  }
+  85% {
+    transform: translateY(1px) scale(0.999);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* 文章翻页页脚 */
@@ -834,6 +923,9 @@ body {
   text-align: center;
   position: relative;
   overflow: hidden;
+  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 
 /* 资料卡背景横幅 */
@@ -850,10 +942,12 @@ body {
   border-radius: 50%;
   margin: -45px auto 14px auto;
   padding: 4px;
-  background: #ffffff;
+  background: var(--card-bg);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 2;
+  transition: background-color 0.35s ease;
+  will-change: transform;
 }
 
 .profile-avatar {
@@ -1135,4 +1229,60 @@ body {
   .intro-subtitle {
     font-size: 0.92rem;
   }
+}
+
+/* ==========================================================================
+   页面右下角：背景 日光 / 黑夜 模式切换浮动按钮
+   ========================================================================== */
+.theme-floating-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--ink-border);
+  border-radius: 30px;
+  color: var(--ink-black);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+  backdrop-filter: blur(8px);
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--bamboo-green);
+  color: var(--bamboo-green);
+  box-shadow: 0 6px 20px rgba(59, 110, 91, 0.22);
+}
+
+.theme-toggle-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.theme-btn-icon {
+  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-toggle-btn:hover .theme-btn-icon {
+  transform: rotate(20deg) scale(1.15);
+}
+
+.theme-btn-label {
+  letter-spacing: 0.05em;
 }
