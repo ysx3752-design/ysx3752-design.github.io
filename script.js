@@ -37,6 +37,8 @@ const detailDate = document.getElementById("detail-date");
 const detailReadtime = document.getElementById("detail-readtime");
 const detailViews = document.getElementById("detail-views");
 const detailBody = document.getElementById("detail-body");
+const bcCategory = document.getElementById("bc-category");
+const bcChapter = document.getElementById("bc-chapter");
 const bcCurrent = document.getElementById("bc-current");
 
 // 翻页按钮
@@ -91,19 +93,88 @@ window.toggleTreeSubgroup = function(element) {
   if (subgroup) subgroup.classList.toggle("open");
 };
 
-// 动态渲染左侧树叶子列表
-function renderTreeLeaves() {
-  const container = document.getElementById("tree-leaf-container");
-  if (!container || !BLOG_POSTS.length) return;
+// 动态渲染左侧树状目录（支持多分类及子章节）
+function renderTreeMenu() {
+  const treeMenu = document.getElementById("tree-menu");
+  if (!treeMenu || !BLOG_POSTS.length) return;
 
-  container.innerHTML = BLOG_POSTS.map(post => `
-    <div class="tree-leaf-item ${post.id === currentArticleId ? 'active' : ''}" 
-         data-id="${post.id}" 
-         onclick="selectArticle(${post.id})">
-      <span class="leaf-icon">📄</span>
-      <span class="leaf-title">${post.title}</span>
-    </div>
-  `).join("");
+  // 按分类 (categoryName) 和 章节 (chapter) 分组
+  const categoryMap = new Map();
+
+  BLOG_POSTS.forEach(post => {
+    const catName = post.categoryName || "AI入门";
+    const catId = post.category || "cat";
+    const chapterName = post.chapter || "第一章 简述";
+
+    if (!categoryMap.has(catName)) {
+      categoryMap.set(catName, {
+        id: catId,
+        chapters: new Map()
+      });
+    }
+
+    const catObj = categoryMap.get(catName);
+    if (!catObj.chapters.has(chapterName)) {
+      catObj.chapters.set(chapterName, []);
+    }
+
+    catObj.chapters.get(chapterName).push(post);
+  });
+
+  const CATEGORY_ICONS = {
+    "AI入门": "🌱",
+    "机器学习": "🤖",
+    "深度学习": "🧠",
+    "神经网络": "⚡",
+    "随笔杂记": "📜"
+  };
+
+  let html = "";
+  categoryMap.forEach((catObj, catName) => {
+    const icon = CATEGORY_ICONS[catName] || "📚";
+    
+    let chaptersHtml = "";
+    catObj.chapters.forEach((posts, chapterName) => {
+      const leavesHtml = posts.map(post => `
+        <div class="tree-leaf-item ${post.id === currentArticleId ? 'active' : ''}" 
+             data-id="${post.id}" 
+             onclick="selectArticle(${post.id})">
+          <span class="leaf-icon">📄</span>
+          <span class="leaf-title">${post.title}</span>
+        </div>
+      `).join("");
+
+      chaptersHtml += `
+        <div class="tree-subgroup open">
+          <div class="tree-node tree-subgroup-head" onclick="toggleTreeSubgroup(this)">
+            <span class="node-icon">📁</span>
+            <span class="node-label">${chapterName}</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="tree-leaf-container">
+            ${leavesHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="tree-group open" id="group-${catObj.id}">
+        <div class="tree-node tree-group-head" onclick="toggleTreeGroup(this)">
+          <span class="node-icon">${icon}</span>
+          <span class="node-label">${catName}</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+        ${chaptersHtml}
+      </div>
+    `;
+  });
+
+  treeMenu.innerHTML = html;
 }
 
 // 选中并显示特定文章
@@ -119,6 +190,8 @@ window.selectArticle = function(id) {
   detailReadtime.textContent = `阅读约需 ${post.readTime}`;
   detailViews.textContent = `${post.views} 次阅览`;
   detailBody.innerHTML = post.content;
+  if (bcCategory) bcCategory.textContent = post.categoryName || "AI入门";
+  if (bcChapter) bcChapter.textContent = post.chapter || "第一章 简述";
   if (bcCurrent) bcCurrent.textContent = post.title;
 
   // 毫秒级动态微跳动画 (丝滑弹性入场，消除切换生硬感)
@@ -213,12 +286,18 @@ function applySocialConfig() {
 document.addEventListener("DOMContentLoaded", () => {
   applySocialConfig();
 
-  // 动态更新右侧统计卡片的文章总数
+  // 动态更新右侧统计卡片的文章总数与专栏数
   const statArticles = document.getElementById("stat-articles");
   if (statArticles) statArticles.textContent = BLOG_POSTS.length;
 
-  // 渲染左侧树
-  renderTreeLeaves();
+  const statColumns = document.getElementById("stat-columns");
+  if (statColumns) {
+    const uniqueCats = new Set(BLOG_POSTS.map(p => p.categoryName));
+    statColumns.textContent = uniqueCats.size;
+  }
+
+  // 渲染左侧分类树
+  renderTreeMenu();
 
   // 默认显示第一篇文章
   if (BLOG_POSTS.length > 0) {
