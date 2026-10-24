@@ -901,6 +901,49 @@ body {
   padding: 0;
 }
 
+/* Markdown 表格古风水墨质感 */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 26px 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ink-border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.detail-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  text-align: left;
+}
+
+.detail-body th {
+  background: var(--bg-rice-paper);
+  color: var(--ink-black);
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--ink-border);
+  white-space: nowrap;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.detail-body td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ink-border);
+  color: var(--ink-deep);
+  transition: border-color 0.35s ease, color 0.35s ease;
+}
+
+.detail-body tr:last-child td {
+  border-bottom: none;
+}
+
+.detail-body tr:hover td {
+  background: var(--bamboo-soft);
+}
+
 
 /* ==========================================================================
    右侧：作者头像与个人信息栏
