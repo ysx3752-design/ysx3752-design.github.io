@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2.8">
+  <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body>
 
@@ -134,8 +134,8 @@
             <span>学习笔记</span>
             <span class="bc-sep">/</span>
             <span id="bc-category">AI入门</span>
-            <span class="bc-sep">/</span>
-            <span id="bc-chapter">第一章 简述</span>
+            <span class="bc-sep" style="display: none;">/</span>
+            <span id="bc-chapter" style="display: none;"></span>
             <span class="bc-sep">/</span>
             <span class="bc-current" id="bc-current">简介</span>
           </nav>
@@ -188,11 +188,11 @@
           <!-- 数据统计 -->
           <div class="profile-stats">
             <div class="stat-item">
-              <span class="stat-num" id="stat-articles">8</span>
+              <span class="stat-num" id="stat-articles">9</span>
               <span class="stat-label">文稿</span>
             </div>
             <div class="stat-item">
-              <span class="stat-num" id="stat-columns">2</span>
+              <span class="stat-num" id="stat-columns">3</span>
               <span class="stat-label">专栏</span>
             </div>
           </div>
@@ -232,6 +232,7 @@
             <div class="tag-cloud">
               <span class="tag-pill">Python</span>
               <span class="tag-pill">Go</span>
+              <span class="tag-pill">Git</span>
             </div>
           </div>
         </div>
@@ -254,7 +255,7 @@
   </div>
 
   <!-- 引入文稿数据源（支持通过 Python 脚本从任意目录同步） -->
-  <script src="articles.js?v=2.8"></script>
-  <script src="script.js?v=2.8"></script>
+  <script src="articles.js?v=3.0"></script>
+  <script src="script.js?v=3.0"></script>
 </body>
 </html>

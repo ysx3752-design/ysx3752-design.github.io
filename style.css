@@ -570,7 +570,8 @@ body {
   transform: rotate(90deg);
 }
 
-.tree-group:not(.open) > .tree-subgroup {
+.tree-group:not(.open) > .tree-subgroup,
+.tree-group:not(.open) > .tree-leaf-container {
   display: none;
 }
 
@@ -588,6 +589,10 @@ body {
   flex-direction: column;
   gap: 2px;
   margin-top: 2px;
+}
+
+.tree-leaf-container.direct-category-leaves .tree-leaf-item {
+  padding-left: 24px;
 }
 
 .tree-leaf-item {
@@ -899,6 +904,21 @@ body {
   background: transparent;
   color: inherit;
   padding: 0;
+}
+
+.detail-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin: 12px 0;
+  display: inline-block;
+  border: 1px solid var(--ink-border);
+}
+
+body.dark-theme .detail-body img {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Markdown 表格古风水墨质感 */

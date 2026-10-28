@@ -104,7 +104,7 @@ function renderTreeMenu() {
   BLOG_POSTS.forEach(post => {
     const catName = post.categoryName || "AI入门";
     const catId = post.category || "cat";
-    const chapterName = post.chapter || "第一章 简述";
+    const chapterName = (post.chapter !== undefined && post.chapter !== null) ? post.chapter.trim() : "";
 
     if (!categoryMap.has(catName)) {
       categoryMap.set(catName, {
@@ -126,7 +126,8 @@ function renderTreeMenu() {
     "机器学习": "🤖",
     "深度学习": "🧠",
     "神经网络": "⚡",
-    "随笔杂记": "📜"
+    "随笔杂记": "📜",
+    "GIT": "🔀"
   };
 
   let html = "";
@@ -144,20 +145,28 @@ function renderTreeMenu() {
         </div>
       `).join("");
 
-      chaptersHtml += `
-        <div class="tree-subgroup open">
-          <div class="tree-node tree-subgroup-head" onclick="toggleTreeSubgroup(this)">
-            <span class="node-icon">📁</span>
-            <span class="node-label">${chapterName}</span>
-            <svg class="chevron-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </div>
-          <div class="tree-leaf-container">
+      if (!chapterName || chapterName === "none" || chapterName.trim() === "") {
+        chaptersHtml += `
+          <div class="tree-leaf-container direct-category-leaves">
             ${leavesHtml}
           </div>
-        </div>
-      `;
+        `;
+      } else {
+        chaptersHtml += `
+          <div class="tree-subgroup open">
+            <div class="tree-node tree-subgroup-head" onclick="toggleTreeSubgroup(this)">
+              <span class="node-icon">📁</span>
+              <span class="node-label">${chapterName}</span>
+              <svg class="chevron-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+            <div class="tree-leaf-container">
+              ${leavesHtml}
+            </div>
+          </div>
+        `;
+      }
     });
 
     html += `
@@ -191,7 +200,18 @@ window.selectArticle = function(id) {
   detailViews.textContent = `${post.views} 次阅览`;
   detailBody.innerHTML = post.content;
   if (bcCategory) bcCategory.textContent = post.categoryName || "AI入门";
-  if (bcChapter) bcChapter.textContent = post.chapter || "第一章 简述";
+  if (bcChapter) {
+    const chapterSep = bcChapter.previousElementSibling;
+    if (post.chapter && post.chapter.trim()) {
+      bcChapter.textContent = post.chapter;
+      bcChapter.style.display = "";
+      if (chapterSep) chapterSep.style.display = "";
+    } else {
+      bcChapter.textContent = "";
+      bcChapter.style.display = "none";
+      if (chapterSep) chapterSep.style.display = "none";
+    }
+  }
   if (bcCurrent) bcCurrent.textContent = post.title;
 
   // 毫秒级动态微跳动画 (丝滑弹性入场，消除切换生硬感)

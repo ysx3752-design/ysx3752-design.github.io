@@ -1,8 +1,8 @@
 /**
  * 墨竹轩 · 博客文章数据库
  * 本文件由 sync_to_blog.py 自动生成，请勿手动编辑
- * 最后同步时间: 2026-10-25 17:36:02
- * 文稿总数: 8 篇
+ * 最后同步时间: 2026-10-28 10:13:55
+ * 文稿总数: 9 篇
  */
 
 const BLOG_POSTS = [
@@ -11,7 +11,7 @@ const BLOG_POSTS = [
     "title": "简介",
     "category": "ai-intro",
     "categoryName": "AI入门",
-    "chapter": "第一章 简述",
+    "chapter": "",
     "date": "2026-10-24",
     "readTime": "3 分钟",
     "views": 460,
@@ -23,7 +23,7 @@ const BLOG_POSTS = [
     "title": "大模型",
     "category": "ai-intro",
     "categoryName": "AI入门",
-    "chapter": "第一章 简述",
+    "chapter": "",
     "date": "2026-10-25",
     "readTime": "7 分钟",
     "views": 520,
@@ -35,7 +35,7 @@ const BLOG_POSTS = [
     "title": "如何正确写Prompt？",
     "category": "ai-intro",
     "categoryName": "AI入门",
-    "chapter": "第一章 简述",
+    "chapter": "",
     "date": "2026-10-24",
     "readTime": "9 分钟",
     "views": 580,
@@ -47,7 +47,7 @@ const BLOG_POSTS = [
     "title": "认识API",
     "category": "ai-intro",
     "categoryName": "AI入门",
-    "chapter": "第一章 简述",
+    "chapter": "",
     "date": "2026-10-25",
     "readTime": "6 分钟",
     "views": 640,
@@ -59,7 +59,7 @@ const BLOG_POSTS = [
     "title": "AI安全进阶",
     "category": "ai-intro",
     "categoryName": "AI入门",
-    "chapter": "第一章 简述",
+    "chapter": "",
     "date": "2026-10-25",
     "readTime": "9 分钟",
     "views": 700,
@@ -101,5 +101,17 @@ const BLOG_POSTS = [
     "views": 880,
     "excerpt": "了解神经网络后，就很好理解深度学习。深度学习就是层数非常多的神经网络。 深(Deep)指的就是神经网络中的隐藏层(Hidden Layers)数量多。",
     "content": "\n      <p>了解神经网络后，就很好理解深度学习。<strong>深度学习就是层数非常多的神经网络。</strong> 深(Deep)指的就是神经网络中的隐藏层(Hidden Layers)<strong>数量多</strong>。</p>\n      <h3>为什么需要“深度”？</h3>\n      <p>在深度学习之前，还有<strong>浅度学习</strong>的概念。传统的机器学习如随机森林、支持向量机SVM就被称为浅层学习，它们通常只有一层或两层数据的变换。</p>\n      <h4>传统机器学习</h4>\n      <p>需要人类手动编写代码提取特征，该过程称为“特征工程”，极度依赖人工，且非常困难。</p>\n      <h4>深度学习(深层神经网络)</h4>\n      <p>把原始数据扔进去，让它自己学习。</p>\n      <p>深度学习的优势在于“特征的自动提取”，层数越深，模型能提取的特征就越抽象、越高级，解决问题的能力越强。</p>\n      <h3>深度学习的三大核心</h3>\n      <ol>\n      <li>海量数据(Big Data)：神经网络参数几朵，若没有几百万、上亿的数据喂给它，它会“死记硬背“（过拟合）。\n      </li>\n      <li>强大算力(GPU)：深度学习中包含了海量的矩阵乘法。传统的CPU核算不过来，而GPU（显卡）有成千上万个核心，可以极速并行做数学计算。\n      </li>\n      <li>算法的突破：\n      <ul>\n      <li>ReLU激活函数：解决了早期在神经网络太深时，梯度在反向传播中消失的问题。（梯度消失）\n      </li>\n      <li>Dropout技术：训练时随机“屏蔽”一部分神经元，强迫网络变得更健壮，从而防止过拟合。\n      </li>\n      <li>Batch Normalization（批归一化）：让每一层的数据分布保持稳定，大大加快了训练速度。\n      </li>\n      </ul>\n      </li>\n      </ol>\n      <h3>深度学习的四大框架</h3>\n      <h4>卷积神经网络CNN</h4>\n      <ul>\n      <li>原理：模仿人类视觉感受，使用“卷积核”(Filter)在图片上华东赛秒，提取局部特征。\n      </li>\n      <li>优势：参数共享（一个卷积核扫全图），极大减少了参数量，计算效率极高。\n      </li>\n      <li>应用：人脸识别、医学影像分析、自动驾驶视觉、图像生成等。\n      </li>\n      </ul>\n      <h4>循环神经网络RNN/LSTM</h4>\n      <ul>\n      <li>原理：拥有记忆功能。当前输出不仅取决于当前的输入，还取决于上一步的输出。\n      </li>\n      <li>缺陷：只能按顺序一步步计算，无法并行，且长序列容易遗忘前面的信息（LSTM是为了缓解遗忘而发明的）。\n      </li>\n      <li>应用：早期的语音识别、股票预测、机器翻译。\n      </li>\n      </ul>\n      <h4>Transformer</h4>\n      <ul>\n      <li>原理：彻底抛弃RNN的顺序计算，引入了“注意力机制”。它可以让模型在处理一句话的同时，关注句子中所有词的关系（比如它知道苹果指的是手机还是水果，看的是上下文语境）。\n      </li>\n      <li>优势：支持大规模并行计算，及其适合GPU训练，能对叠到极深的层数。\n      </li>\n      <li>应用：是市面上大部分LLM的底座，现在的NLP（自然语言处理）和计算机视觉ViT几乎都被Transformer统一。\n      </li>\n      </ul>\n      <h4>生成对抗网络GAN</h4>\n      <ul>\n      <li>原理：由两个网络组成。一个叫做生成器(Generator)，一个叫判别器(Discriminator)。二者在训练中不断进行对抗、进化，直到生成器能够以假乱真。\n      </li>\n      <li>应用：AI换脸（Deepfake）、生成高清照片。\n      </li>\n      </ul>\n      <h3>深度学习的训练</h3>\n      <p>一个深度学习项目的生命走起通常为：</p>\n      <ol>\n      <li><strong>构建网络结构</strong>：决定使用CNN还是Transformer，设计网络层数，每层有多少神经元。\n      </li>\n      <li>前向传播Forward：数据输入网络，一路矩阵乘法和激活函数，得出预测结果。\n      </li>\n      <li>计算损失Loss：用损失函数计算预测值和真实答案差了多少。\n      </li>\n      <li>反向传播Backward：利用微积分的链式法则，从后往前算每个参数的梯度。\n      </li>\n      <li>参数更新Optimization：用优化器更新所有参数，让损失变小。\n      </li>\n      <li>循环迭代：把成百上千的数据分成小批次（Batch），重复2-5的步骤，直到模型在验证集上的表现达到最优。\n      </li>\n      </ol>\n      <h3>深度学习的三大痛点</h3>\n      <ol>\n      <li>黑盒问题（可解释性差）：你可以拿到99%准确率的结果，但你无法解释这个神经网络为什么这么判断。这在要求安全性极高的领域是致命的。\n      </li>\n      <li>算力与能耗极高：训练一次顶级LLM，需要几千张顶级显卡跑几个月，耗电量相当高。\n      </li>\n      <li>缺乏常识与推理：深度学习本质是“概率拟合”，并没有真正的推理能力。遇到没见过的数据或被故意设计的对抗样本欺骗，它可能会给出极其荒谬的答案。\n      </li>\n      </ol>\n    "
+  },
+  {
+    "id": 9,
+    "title": "常用指令",
+    "category": "git",
+    "categoryName": "GIT",
+    "chapter": "",
+    "date": "2026-10-28",
+    "readTime": "5 分钟",
+    "views": 940,
+    "excerpt": "Git日常开发常用指令速查，涵盖常用工作流、日志查看、版本回退、文件忽略及分支管理等核心操作。",
+    "content": "\n      <h3>一个简单工作流</h3>\n      <ol>\n      <li>初始化仓库：git init\n      </li>\n      <li>克隆仓库：git clone 仓库地址\n      <p>gitee仓库地址</p>\n      <p align=\"center\">\n      <img src=\"./assets/image-1.png\" alt=\"image-1.png\">\n      </p>\n      <p>github仓库地址</p>\n      <p align=\"center\">\n      <img src=\"./assets/image.png\" alt=\"image.png\">\n      </p>\n      </li>\n      <li>提交所有文件到暂存区：git add .\n      </li>\n      <li>提交单个文件到暂存区：git add 文件名\n      </li>\n      <li>将暂存区内容提交到本地仓库：git commit -m “提交说明\"\n      </li>\n      <li>推送：git push -u origin 分支名（没有分支<strong>仓库为空时需要添加-u，不是空的可以不加.</strong>\n      </li>\n      </ol>\n      <hr class=\"ink-divider-thin\">\n      <h3>GIT日志</h3>\n      <ol>\n      <li>查看所有日志：git log\n      </li>\n      <li>简化成一行日志：git log --oneline\n      </li>\n      <li>查看仓库信息（更改记录等）：git status\n      </li>\n      </ol>\n      <hr class=\"ink-divider-thin\">\n      <h3>GIT版本</h3>\n      <ol>\n      <li>查看版本号：git log --oneline\n      </li>\n      <li>回退到想要的版本：git reset --hard 版本号\n      </li>\n      <li>回到之前版本后，如果发现找不到未来记录，可使用<code>git reflog</code>查看git的所有操作记录。\n      </li>\n      </ol>\n      <hr class=\"ink-divider-thin\">\n      <h3>文件的忽略</h3>\n      <p>在.git文件夹同级目录下新增.gitignore文件，写入忽略规则，可以在执行git相关操作的时候忽略改文件。</p>\n      <p>语法为：</p>\n      <pre><code>\n      # .gitignore内容：\n      password.txt\n      \n      # 其余用法：\n      # 忽略文件夹\n      css\n      # 忽略文件夹下的某个文件\n      css/index.js\n      # 忽略文件夹下某类文件\n      css/*.js\n      </code></pre>\n      <hr class=\"ink-divider-thin\">\n      <h3>GIT的分支</h3>\n      <ol>\n      <li>创建分支：git branch 分支名\n      </li>\n      <li>查看当前版本库下所含有的所有分支：git branch\n      </li>\n      <li>切换分支：git checkout 分支名\n      </li>\n      <li>分支合并：\n      <ul>\n      <li>切换分支：git checkout master（master为主分支）\n      </li>\n      <li>合并：git merge 目标分支名\n      <p>为了更好理解，比如我建了一个名为abc的分支。</p>\n      <p><code>git branch abc</code></p>\n      <p>我在该分支下进行了添加文件abc.txt，随后进行分支上的提交。</p>\n      <p><code>git add .</code></p>\n      <p><code>git commit -m '添加abc.txt文件'</code></p>\n      <p><code>git push -u origin abc</code></p>\n      <p>这样就完成了在分支上的操作，随后再并入主分支master。</p>\n      <p><code>git checkout master</code></p>\n      <p><code>git merge abc</code>#在master分支上合并abc分支。</p>\n      </li>\n      </ul>\n      </li>\n      <li>分支删除：git branch -d 分支名\n      <p>如果分支的修改没有被合并，Git会提示你是否确认要删除，如果你不在乎分支的内容，可以使用<code>git branch -D 分支名</code>来强制删除分支。</p>\n      </li>\n      <li>分支合并时的冲突解决：\n      <p>当两个分支修改了同一个文件的同一处内容并分别提交过，在合并时 Git 无法自动判断保留哪一份，就会产生冲突（Conflict）。</p>\n      <ul>\n      <li><strong>第一步：查看冲突文件</strong>\n      <p>输入 <code>git status</code> 查看状态，标红或提示 <code>both modified</code> 的就是发生冲突的文件。</p>\n      </li>\n      <li><strong>第二步：打开文件，手动修改内容</strong>\n      <p>用文本编辑器（如 VS Code、记事本等）打开冲突文件，Git 会在冲突区域自动生成三行标记符号：</p>\n      <pre><code>\n           &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD\n           当前所在分支的代码\n           =======\n           要合并进来的分支代码\n           &gt;&gt;&gt;&gt;&gt;&gt;&gt; 目标分支名\n      </code></pre>\n      <p><strong>各符号的具体含义</strong>：</p>\n      </li>\n      <li><code><<<<<<< HEAD</code>：标记当前所在分支代码的开头。\n      </li>\n      <li><code>=======</code>：两条分支代码的分隔分割线。\n      </li>\n      <li><code>>>>>>>> 目标分支名</code>：标记合并进来的分支代码的结尾。\n      <p><strong>具体修改操作</strong>：</p>\n      </li>\n      </ul>\n      <ol>\n      <li><strong>决定代码的取舍</strong>：\n      </li>\n      </ol>\n      <ul>\n      <li>如果只想要当前分支的代码：删掉 <code>=======</code> 下方合并分支的代码。\n      </li>\n      <li>如果只想要合并进来的分支代码：删掉 <code><<<<<<< HEAD</code> 下方当前分支的代码。\n      </li>\n      <li>如果两边修改的代码都要：把两段代码都保留，按需要的顺序整理排列。\n      </li>\n      </ul>\n      <ol start=\"2\">\n      <li><strong>彻底删除三行 Git 标记符</strong>：\n      </li>\n      </ol>\n      <ul>\n      <li>将包含 <code><<<<<<< HEAD</code> 的整行删掉；\n      </li>\n      <li>将包含 <code>=======</code> 的整行删掉；\n      </li>\n      <li>将包含 <code>>>>>>>> 目标分支名</code> 的整行删掉。\n      </li>\n      </ul>\n      <ol start=\"3\">\n      <li><strong>最终保存</strong>：\n      <p>确保文件中只留下整理好的正常代码，没有任何 <code><<<<<<<</code>、<code>=======</code>、<code>>>>>>>></code> 符号后，保存文件。</p>\n      </li>\n      </ol>\n      <ul>\n      <li><strong>补充：如果想放弃合并</strong>\n      <p>如果在处理冲突过程中不想合并了，输入以下命令即可取消合并，代码恢复原状：</p>\n      <pre><code>\n           git merge --abort\n      </code></pre>\n      </li>\n      </ul>\n      </li>\n      </ol>\n    "
   }
 ];
