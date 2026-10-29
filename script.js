@@ -231,12 +231,260 @@ window.selectArticle = function(id) {
     }
   });
 
-  // 3. 更新底部翻页按钮状态
+  // 3. 动态渲染右侧文档大纲 (根据题目级别树状分类)
+  renderArticleOutline();
+
+  // 4. 更新底部翻页按钮状态
   updatePager();
 
-  // 4. 平滑滚动到正文顶部
+  // 5. 平滑滚动到正文顶部
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
+
+// ==========================================
+// 3.1. 右侧文档大纲 (TOC Outline) 核心逻辑
+// ==========================================
+
+// 动态构建并渲染当前文章的文档大纲树
+function renderArticleOutline() {
+  const outlineContent = document.getElementById("outline-content");
+  if (!outlineContent) return;
+
+  const detailTitle = document.getElementById("detail-title");
+  const detailBody = document.getElementById("detail-body");
+  if (!detailBody) return;
+
+  const titleText = detailTitle ? detailTitle.textContent.trim() : "当前篇章";
+  const titleId = "outline-anchor-title";
+  if (detailTitle) detailTitle.id = titleId;
+
+  // 获取正文所有标题 (h2, h3, h4, h5)
+  // 注意：Markdown ## -> h3, ### -> h4, #### -> h5
+  const headingEls = Array.from(detailBody.querySelectorAll("h2, h3, h4, h5"));
+
+  if (!headingEls.length) {
+    outlineContent.innerHTML = `
+      <div class="outline-empty">
+        <span class="empty-icon">🍃</span>
+        <span>当前篇章暂无二级小节</span>
+      </div>
+    `;
+    return;
+  }
+
+  // 整理层级结构
+  // H2 或 H3 (Markdown ##) 作为二级主节
+  // H4 (Markdown ###) 作为三级小节
+  // H5 (Markdown ####) 作为四级细分子项
+  const tree = [];
+  let currentH2Node = null;
+
+  headingEls.forEach((el, index) => {
+    const id = "outline-heading-" + index;
+    el.id = id;
+    const tagName = el.tagName.toUpperCase();
+    const text = el.textContent.trim();
+
+    if (tagName === "H2" || tagName === "H3") {
+      currentH2Node = {
+        id: id,
+        text: text,
+        level: 2,
+        children: []
+      };
+      tree.push(currentH2Node);
+    } else if (tagName === "H4") {
+      const childNode = {
+        id: id,
+        text: text,
+        level: 3,
+        children: []
+      };
+      if (currentH2Node) {
+        currentH2Node.children.push(childNode);
+      } else {
+        tree.push(childNode);
+      }
+    } else if (tagName === "H5") {
+      const subChildNode = {
+        id: id,
+        text: text,
+        level: 4
+      };
+      if (currentH2Node && currentH2Node.children.length > 0) {
+        const lastChild = currentH2Node.children[currentH2Node.children.length - 1];
+        lastChild.children = lastChild.children || [];
+        lastChild.children.push(subChildNode);
+      } else if (currentH2Node) {
+        currentH2Node.children.push(subChildNode);
+      } else {
+        tree.push(subChildNode);
+      }
+    }
+  });
+
+  // 构建 HTML 树状节点
+  let childrenHtml = "";
+
+  tree.forEach(node => {
+    const hasChildren = node.children && node.children.length > 0;
+    
+    let subHtml = "";
+    if (hasChildren) {
+      subHtml = node.children.map(child => {
+        return `
+          <div class="outline-leaf" data-heading-id="${child.id}" onclick="jumpToHeading('${child.id}')" title="${child.text}">
+            <span class="outline-leaf-text">${child.text}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    childrenHtml += `
+      <div class="outline-section ${hasChildren ? 'has-children open' : 'no-children'}" data-heading-id="${node.id}">
+        <div class="outline-row">
+          ${hasChildren ? `
+            <span class="outline-chevron" onclick="toggleOutlineSection(event, this)">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </span>
+          ` : `<span class="outline-spacer"></span>`}
+          <span class="outline-row-title" onclick="jumpToHeading('${node.id}')" title="${node.text}">
+            ${node.text}
+          </span>
+        </div>
+        ${hasChildren ? `<div class="outline-sub-container">${subHtml}</div>` : ''}
+      </div>
+    `;
+  });
+
+  const rootHtml = `
+    <div class="outline-root open" id="outline-root-node">
+      <div class="outline-row root-row active">
+        <span class="outline-chevron" onclick="toggleOutlineRoot(event, this)">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </span>
+        <span class="outline-row-title root-title" onclick="jumpToHeading('${titleId}')" title="${titleText}">
+          ${titleText}
+        </span>
+      </div>
+      <div class="outline-root-children" id="outline-root-children">
+        ${childrenHtml}
+      </div>
+    </div>
+  `;
+
+  outlineContent.innerHTML = rootHtml;
+}
+
+// 点击大纲项平滑滚动至对应正文位置
+window.jumpToHeading = function(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const headerOffset = 95;
+  const elementPosition = el.getBoundingClientRect().top;
+  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: "smooth"
+  });
+
+  // 更新大纲高亮
+  highlightOutlineItem(id);
+
+  // 正文标题微跳反馈
+  el.classList.remove("heading-jump-target");
+  void el.offsetWidth;
+  el.classList.add("heading-jump-target");
+};
+
+// 单节折叠切换
+window.toggleOutlineSection = function(event, chevron) {
+  if (event) event.stopPropagation();
+  const section = chevron.closest(".outline-section");
+  if (section) section.classList.toggle("open");
+};
+
+// 根节点（文档标题）折叠切换
+window.toggleOutlineRoot = function(event, chevron) {
+  if (event) event.stopPropagation();
+  const root = chevron.closest(".outline-root");
+  if (root) root.classList.toggle("open");
+};
+
+// 全部折叠/展开按钮
+window.toggleAllOutlineNodes = function() {
+  const sections = document.querySelectorAll(".outline-section.has-children, .outline-root");
+  if (!sections.length) return;
+  const anyClosed = Array.from(sections).some(s => !s.classList.contains("open"));
+  sections.forEach(s => {
+    if (anyClosed) s.classList.add("open");
+    else s.classList.remove("open");
+  });
+};
+
+// 高亮指定的大纲条目
+function highlightOutlineItem(id) {
+  document.querySelectorAll(".outline-row, .outline-leaf").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  if (!id || id === "outline-anchor-title") {
+    const rootRow = document.querySelector(".outline-row.root-row");
+    if (rootRow) rootRow.classList.add("active");
+    return;
+  }
+
+  const targetEl = document.querySelector(`[data-heading-id="${id}"]`);
+  if (!targetEl) return;
+
+  if (targetEl.classList.contains("outline-leaf")) {
+    targetEl.classList.add("active");
+    const parentSection = targetEl.closest(".outline-section");
+    if (parentSection) parentSection.classList.add("open");
+  } else if (targetEl.classList.contains("outline-section")) {
+    const row = targetEl.querySelector(".outline-row");
+    if (row) row.classList.add("active");
+  }
+}
+
+// 页面滚动监听：Scrollspy 大纲自动跟随高亮
+let isScrollTicking = false;
+window.addEventListener("scroll", () => {
+  if (isScrollTicking) return;
+  isScrollTicking = true;
+  requestAnimationFrame(() => {
+    updateOutlineScrollspy();
+    isScrollTicking = false;
+  });
+}, { passive: true });
+
+function updateOutlineScrollspy() {
+  const detailBody = document.getElementById("detail-body");
+  if (!detailBody) return;
+  const headings = Array.from(detailBody.querySelectorAll("h2, h3, h4, h5"));
+  if (!headings.length) return;
+
+  const headerOffset = 130;
+  let activeId = "outline-anchor-title";
+
+  if (window.pageYOffset > 150) {
+    for (let i = 0; i < headings.length; i++) {
+      const rect = headings[i].getBoundingClientRect();
+      if (rect.top <= headerOffset) {
+        activeId = headings[i].id;
+      } else {
+        break;
+      }
+    }
+  }
+
+  highlightOutlineItem(activeId);
+}
 
 // 底部上一篇/下一篇切换
 window.navigateArticle = function(delta) {
