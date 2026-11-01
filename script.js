@@ -199,6 +199,23 @@ window.selectArticle = function(id) {
   detailReadtime.textContent = `阅读约需 ${post.readTime}`;
   detailViews.textContent = `${post.views} 次阅览`;
   detailBody.innerHTML = post.content;
+
+  // KaTeX 数学公式渲染支持（如已加载）
+  if (typeof renderMathInElement === "function") {
+    try {
+      renderMathInElement(detailBody, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true }
+        ],
+        throwOnError: false
+      });
+    } catch (err) {
+      console.warn("KaTeX render notice:", err);
+    }
+  }
   if (bcCategory) bcCategory.textContent = post.categoryName || "AI入门";
   if (bcChapter) {
     const chapterSep = bcChapter.previousElementSibling;
