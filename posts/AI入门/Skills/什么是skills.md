@@ -211,6 +211,7 @@ description: 说明该 Skill 的功能以及适用场景
 ---
 ```
 
+---
 
 ## Skill 的文件目录结构
 
@@ -225,6 +226,6 @@ description: 说明该 Skill 的功能以及适用场景
 - 实用逻辑 → 脚本执行（不加载）
 
 <p align="center">
-  <img src="./assets/image.png" alt="image.png" width="500px">
+  <img src="./assets/image-1.png" alt="image.png" width="400px">
 </p>
 
