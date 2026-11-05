@@ -73,6 +73,13 @@ description: 当用户要求重构、审查或编写 Python 代码时，请参�
 
    安装好的插件在～/claude/plugins/marketplaces/目录下。
 
+   - 也可直接通过命令安装上述两类插件：
+
+     ```
+     /plugin install document-skills@anthropic-agent-skills
+     /plugin install example-skills@anthropic-agent-skills
+     ```
+
 3. 使用的时候只需在指令中提及技能名称即可调用，例如安装 document-skills 插件后，可向 Claude Code 下达指令：
 
    ```
@@ -84,4 +91,10 @@ description: 当用户要求重构、审查或编写 Python 代码时，请参�
    ```
    创建一个 Agent Skill 的演示文稿
    ```
+
+---
+
+## Agent Skills 相关资源整理
+
+<table data-nomo-table="semantic"><tbody><tr><th data-align="left"><p>资源说明</p></th><th data-align="left"><p>链接</p></th></tr><tr><td><p>Skill 聚合入口</p></td><td><p><a href="https://skills.sh/">https://skills.sh/</a></p></td></tr><tr><td><p>Skills 市场（中文界面）</p></td><td><p><a href="https://skillsmp.com/zh">https://skillsmp.com/zh</a></p></td></tr><tr><td><p>Agent Skills 官方标准站点</p></td><td><p><a href="https://agentskills.io/">https://agentskills.io</a></p></td></tr><tr><td><p>Anthropic 官方工程文章（Agent Skills 实战理念）</p></td><td><p><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills</a></p></td></tr><tr><td><p>VS Code Copilot Agent Skills 文档</p></td><td><p><a href="https://code.visualstudio.com/docs/copilot/customization/agent-skills">https://code.visualstudio.com/docs/copilot/customization/agent-skills</a></p></td></tr><tr><td><p>Anthropic 官方 Skills GitHub 仓库</p></td><td><p><a href="https://github.com/anthropics/skills">https://github.com/anthropics/skills</a></p></td></tr><tr><td><p>Claude 技能精选列表（Awesome 系列）</p></td><td><p><a href="https://github.com/ComposioHQ/awesome-claude-skills">https://github.com/ComposioHQ/awesome-claude-skills</a></p></td></tr><tr><td><p>软件开发自动化工作流 Skills 集合</p></td><td><p><a href="https://github.com/obra/superpowers">https://github.com/obra/superpowers</a></p></td></tr><tr><td><p>自动生成 Skill 的 Skill（官方示例）</p></td><td><p><a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator">https://github.com/anthropics/skills/tree/main/skills/skill-creator</a></p></td></tr></tbody></table>
 
