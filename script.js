@@ -243,6 +243,10 @@ window.selectArticle = function(id) {
     const itemId = parseInt(item.getAttribute("data-id"));
     if (itemId === id) {
       item.classList.add("active");
+      // 保持当前选中的文章条目在左侧滑块可视区域内
+      try {
+        item.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } catch (e) {}
     } else {
       item.classList.remove("active");
     }
