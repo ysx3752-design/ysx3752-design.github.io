@@ -930,26 +930,44 @@ body.dark-theme .tree-menu::-webkit-scrollbar-thumb:hover {
 }
 
 .detail-body code {
-  background: #ebe7df;
+  background: var(--tree-panel-border);
+  color: var(--ink-deep);
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 0.9em;
-  font-family: Consolas, Monaco, monospace;
+  font-size: 0.88em;
+  font-family: Consolas, Monaco, "Fira Code", monospace;
+}
+
+body.dark-theme .detail-body code {
+  background: #1e293b;
+  color: #93c5fd;
 }
 
 .detail-body pre {
-  background: #25282a;
-  color: #e5e9f0;
-  padding: 20px;
+  background: #21252b;
+  color: #abb2bf;
+  padding: 18px 20px;
   border-radius: var(--radius-sm);
   overflow-x: auto;
-  margin: 24px 0;
+  margin: 22px 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-family: Consolas, Monaco, "Fira Code", monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+body.dark-theme .detail-body pre {
+  background: #111827;
+  border-color: #1f2937;
 }
 
 .detail-body pre code {
-  background: transparent;
-  color: inherit;
-  padding: 0;
+  background: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  font-family: inherit;
+  font-size: inherit;
+  border-radius: 0;
 }
 
 .detail-body img {

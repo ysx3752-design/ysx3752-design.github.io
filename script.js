@@ -216,6 +216,15 @@ window.selectArticle = function(id) {
       console.warn("KaTeX render notice:", err);
     }
   }
+
+  // Prism.js 代码语法高亮即时渲染
+  if (typeof Prism !== "undefined" && Prism.highlightAllUnder) {
+    try {
+      Prism.highlightAllUnder(detailBody);
+    } catch (err) {
+      console.warn("Prism highlight notice:", err);
+    }
+  }
   if (bcCategory) bcCategory.textContent = post.categoryName || "AI入门";
   if (bcChapter) {
     const chapterSep = bcChapter.previousElementSibling;
@@ -591,6 +600,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // 默认显示第一篇文章
   if (BLOG_POSTS.length > 0) {
     selectArticle(BLOG_POSTS[0].id);
+  }
+
+  // 保证 Prism.js 资源就绪后即时高亮
+  if (typeof Prism !== "undefined" && Prism.highlightAllUnder) {
+    Prism.highlightAllUnder(detailBody);
+  } else {
+    window.addEventListener("load", () => {
+      if (typeof Prism !== "undefined" && Prism.highlightAllUnder) {
+        Prism.highlightAllUnder(detailBody);
+      }
+    });
   }
 });
 
